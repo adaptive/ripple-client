@@ -252,8 +252,13 @@ module.factory('rpId', ['$rootScope', '$location', '$route', '$routeParams', 'rp
       var blob = $blob.decrypt(username.toLowerCase(), password, data);
       if (!blob) {
         // Unable to decrypt blob
-        var msg = 'Unable to decrypt blob (Username / Password is wrong';
+        var msg = 'Unable to decrypt blob (Username / Password is wrong)';
         callback(new Error(msg));
+        return;
+      } else if (blob.old && !self.allowOldBlob) {
+        var oldBlobErr = new Error('Old blob format detected');
+        oldBlobErr.name = "OldBlobError";
+        callback(oldBlobErr);
         return;
       }
 
